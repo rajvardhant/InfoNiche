@@ -13,9 +13,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+enum FilterList { bbcNews, bloomberg, independent, retuers, cnn, argaam }
+
 class _HomeScreenState extends State<HomeScreen> {
   NewsViewModel newsViewModel = NewsViewModel();
+  FilterList? selectedMenu;
   final format = DateFormat('MMM dd, yyyy');
+
+  String name = 'bbc-news';
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height * 1;
@@ -23,22 +29,93 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {},
+            icon: Image.asset(
+              'images/news1.png',
+              height: 30,
+              width: 30,
+            ),
+          ),
           title: Text(
             'InfoNiche',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            style:
+                GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w700),
           ),
+          actions: [
+            PopupMenuButton<FilterList>(
+                initialValue: selectedMenu,
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Colors.black,
+                ),
+                onSelected: (FilterList item) {
+                  setState(() {
+                    selectedMenu = item;
+                    if (item == FilterList.bbcNews) {
+                      name = 'bbc-news';
+                    } else if (item == FilterList.bloomberg) {
+                      name = 'bloomberg';
+                    } else if (item == FilterList.argaam) {
+                      name = 'al-jazeera-english';
+                    }
+                    else if (item == FilterList.cnn) {
+                      name = 'CNN';
+                    }
+                    print('Selected news source: $name'); // Debug log
+                  });
+                },
+
+                itemBuilder: (context) => <PopupMenuEntry<FilterList>>[
+                      PopupMenuItem<FilterList>(
+                        value: FilterList.bbcNews,
+                        child: Text('BBC News'),
+                      ),
+                      PopupMenuItem<FilterList>(
+                        value: FilterList.bloomberg,
+                        child: Text('bloomberg'),
+                      ),
+                      PopupMenuItem<FilterList>(
+                        value: FilterList.argaam,
+                        child: Text('Al-jazeera News'),
+                      ),
+                      PopupMenuItem<FilterList>(
+                        value: FilterList.cnn,
+                        child: Text('CNN'),
+                      ),
+                    ])
+          ],
         ),
         body: ListView(children: [
           SizedBox(
               height: height * .55,
               width: widht,
               child: FutureBuilder<NewsChannelHeadlinesModel>(
-                future: NewsViewModel().fetchNewChannelHeadlinesApi(),
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: SpinKitSpinningLines(size: 50, color: Colors.blue),
-                    );
+                      future: newsViewModel.fetchNewChannelHeadlinesApi(name),
+                      builder: (BuildContext context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(
+                            child: SpinKitSpinningLines(size: 50, color: Colors.blue),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.error_outline, color: Colors.red, size: 60),
+                                SizedBox(height: 16),
+                                Text(
+                                  'Error loading news\n${snapshot.error}',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else if (!snapshot.hasData || snapshot.data!.articles!.isEmpty) {
+                          return Center(
+                            child: Text('No articles available.'),
+                          );
                   } else {
                     return ListView.builder(
                         itemCount: snapshot.data!.articles!.length,
@@ -107,28 +184,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           Spacer(),
                                           Container(
-                                            width: widht *0.7,
+                                            width: widht * 0.7,
                                             child: Row(
-
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
-                                              snapshot
-                                                  .data!.articles![index].source!.name
-                                                  .toString(),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                            Text(format.format(dateTime),
-
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-
+                                                  snapshot
+                                                      .data!
+                                                      .articles![index]
+                                                      .source!
+                                                      .name
+                                                      .toString(),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                                Text(
+                                                  format.format(dateTime),
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
                                               ],
                                             ),
                                           )

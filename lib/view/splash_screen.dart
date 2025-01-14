@@ -24,11 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
   }
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height * 1;
@@ -41,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Image.asset(
               'images/news2.jpg',
               fit: BoxFit.cover,
-              width: widht * .9,
+              width: widht * 1,
               height: height *.5,
             ),
             SizedBox(height: height * 0.04,),
@@ -54,6 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
           ],
         ),
       ),
+      
     );
   }
 }

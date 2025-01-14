@@ -18,7 +18,7 @@ packages:
     source: hosted
     version: "2.1.1"
   cached_network_image:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: cached_network_image
       sha256: "7c1183e361e5c8b0a0f21a28401eecdbde252441106a9816400dd4c2b2424916"
@@ -127,7 +127,7 @@ packages:
     source: hosted
     version: "3.4.1"
   flutter_lints:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_lints
       sha256: "3f41d009ba7172d5ff9be5f6e6e6abb4300e263aab8866d2a0842ed2a70f8f0c"
@@ -135,7 +135,7 @@ packages:
     source: hosted
     version: "4.0.0"
   flutter_spinkit:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_spinkit
       sha256: d2696eed13732831414595b98863260e33e8882fc069ee80ec35d4ac9ddb0472
@@ -147,8 +147,16 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  get:
+    dependency: "direct main"
+    description:
+      name: get
+      sha256: e4e7335ede17452b391ed3b2ede016545706c01a02292a6c97619705e7d2a85e
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.6"
   google_fonts:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: google_fonts
       sha256: b1ac0fe2832c9cc95e5e88b57d627c5e68c223b9657f4b96e1487aa9098c7b82
@@ -156,7 +164,7 @@ packages:
     source: hosted
     version: "6.2.1"
   http:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: http
       sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
@@ -172,7 +180,7 @@ packages:
     source: hosted
     version: "4.0.2"
   intl:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: intl
       sha256: "00f33b908655e606b86d2ade4710a231b802eec6f11e87e4ea3783fd72077a50"

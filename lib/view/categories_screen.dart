@@ -40,7 +40,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final height = MediaQuery.sizeOf(context).height * 1;
     final widht = MediaQuery.sizeOf(context).width * 1;
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(
+          'Categories',
+          style: GoogleFonts.poppins(
+              fontSize: 20, color: Colors.black, fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Get.to(HomeScreen());
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(

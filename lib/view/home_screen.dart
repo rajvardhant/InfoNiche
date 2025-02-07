@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/model/news_channel_headlines_modle.dart';
 import 'package:news_app/view/categories_screen.dart';
@@ -37,11 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
           leading: IconButton(
             onPressed: () {Get.to(CategoriesScreen());},
-            icon: Image.asset(
-              'images/news1.png',
-              height: 30,
-              width: 30,
-            ),
+            icon: Icon(Icons.drag_indicator, color: Colors.black),
+            // Image.asset(
+            //   'images/news1.png',
+            //   height: 30,
+            //   width: 30,
+            // ),
           ),
           title: Text(
             'InfoNiche',
@@ -92,6 +94,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     ])
           ],
         ),
+
+      bottomNavigationBar: Container(
+        color: Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: GNav(
+            backgroundColor: Colors.black,
+            color: Colors.white,
+            activeColor: Colors.white,
+            tabBackgroundColor: Colors.grey[800]!,
+            gap: 8,
+            padding: EdgeInsets.all(16),
+            tabs: const[
+              GButton(icon: Icons.home, text: 'Home'),
+              GButton(icon: Icons.search, text: 'Search'),
+              GButton(icon: Icons.favorite_border, text: 'like'),
+              GButton(icon: Icons.settings, text: 'Setting'),
+            ]),
+        ),
+      ),
+
         body: SingleChildScrollView(
           child: Column(
             children: [

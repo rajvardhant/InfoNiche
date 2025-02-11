@@ -10,6 +10,8 @@ import '../view_model/news_view_model.dart';
 import 'home_screen.dart';
 import 'news_detail_screen.dart';
 
+const spinKit2 = SpinKitFadingCircle(color: Colors.amber, size: 50);
+
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -155,7 +157,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               .data!.articles![index].title
                                               .toString(),
                                               style: GoogleFonts.poppins(fontSize: 15,
-                                              color: Colors.black,
+                                              color: Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
                                               fontWeight:FontWeight.w600
                                               ),
                                               ),
@@ -167,13 +171,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                               .data!.articles![index].source!.name
                                               .toString(),
                                               style: GoogleFonts.poppins(fontSize: 12,
-                                              color: Colors.black,
+                                              color: Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
                                               fontWeight:FontWeight.w500
                                               ),
                                               ),
                                               Text( format.format(dateTime),
                                               style: GoogleFonts.poppins(fontSize: 12,
-                                              color: Colors.black,
+                                              color: Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
                                               fontWeight:FontWeight.w500
                                               ),
                                               ),

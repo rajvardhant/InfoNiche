@@ -51,16 +51,24 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             Get.to(() => const CategoriesScreen());
           },
-          icon: const Icon(Icons.drag_indicator),
+          icon: Icon(Icons.drag_indicator, 
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+          ),
         ),
         title: Text(
           'InfoNiche',
-          style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w700),
+          style: GoogleFonts.poppins(
+            fontSize: 24, 
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+          ),
         ),
         actions: [
           PopupMenuButton<FilterList>(
             initialValue: selectedMenu,
-            icon: const Icon(Icons.more_vert),
+            icon: Icon(Icons.more_vert,
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+            ),
             onSelected: (FilterList item) {
               setState(() {
                 selectedMenu = item;
@@ -167,9 +175,10 @@ class _HomeContentState extends State<HomeContent> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(
-            height: height * .55,
-            width: width,
+          Container(
+            height: height * .5,
+            width: width*2,
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: FutureBuilder<NewsChannelHeadlinesModel>(
               future: newsViewModel.fetchNewChannelHeadlinesApi(name),
               builder: (context, snapshot) {
@@ -198,19 +207,25 @@ class _HomeContentState extends State<HomeContent> {
                         alignment: Alignment.center,
                         children: [
                           Container(
-                            height: height * 0.6,
+                            height: height * 0.5,
                             width: width * .9,
                             padding: EdgeInsets.symmetric(
                               horizontal: height * .02,
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(15),
-                              child: Image.network(
-                                snapshot.data!.articles![index].urlToImage
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot.data!.articles![index].urlToImage
                                         .toString() ??
                                     '',
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
+                                placeholder: (context, url) => Container(
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.amber,
+                                    size: 50,
+                                  ),
+                                ),
+                                errorWidget: (context, error, stackTrace) {
                                   return const Icon(Icons.error);
                                 },
                               ),
@@ -227,7 +242,7 @@ class _HomeContentState extends State<HomeContent> {
                               child: Container(
                                 alignment: Alignment.bottomCenter,
                                 padding: const EdgeInsets.all(15),
-                                height: height * .22,
+                                height: height * .18,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -242,6 +257,7 @@ class _HomeContentState extends State<HomeContent> {
                                         style: GoogleFonts.poppins(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w700,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                         ),
                                       ),
                                     ),
@@ -261,6 +277,7 @@ class _HomeContentState extends State<HomeContent> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
+                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                             ),
                                           ),
                                           Text(
@@ -270,6 +287,7 @@ class _HomeContentState extends State<HomeContent> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
+                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                             ),
                                           ),
                                         ],
@@ -307,120 +325,117 @@ class _HomeContentState extends State<HomeContent> {
                   );
                 }
 
-                return SizedBox(
-                  height: height * .4,
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.articles!.length,
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final article = snapshot.data!.articles![index];
-                      DateTime dateTime = DateTime.parse(article.publishedAt.toString());
-                      bool isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+                return ListView.builder(
+                  itemCount: snapshot.data!.articles!.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final article = snapshot.data!.articles![index];
+                    DateTime dateTime = DateTime.parse(article.publishedAt.toString());
+                    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-                      return InkWell(
-                        onTap: () {
-                          Get.to(NewsDetailScreen(
-                            newImage: article.urlToImage.toString(),
-                            newsTitle: article.title.toString(),
-                            newsDate: article.publishedAt.toString(),
-                            author: article.author.toString(),
-                            description: article.description.toString(),
-                            content: article.content.toString(),
-                            source: article.source!.name.toString(),
-                          ));
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    bottomLeft: Radius.circular(12),
+                    return InkWell(
+                      onTap: () {
+                        Get.to(NewsDetailScreen(
+                          newImage: article.urlToImage.toString(),
+                          newsTitle: article.title.toString(),
+                          newsDate: article.publishedAt.toString(),
+                          author: article.author.toString(),
+                          description: article.description.toString(),
+                          content: article.content.toString(),
+                          source: article.source!.name.toString(),
+                        ));
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12),
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: article.urlToImage.toString(),
+                                  fit: BoxFit.cover,
+                                  height: height * .18,
+                                  width: width * .3,
+                                  placeholder: (context, url) => Container(
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.amber,
+                                      size: 50,
+                                    ),
                                   ),
-                                  child: CachedNetworkImage(
-                                    imageUrl: article.urlToImage.toString(),
-                                    fit: BoxFit.cover,
-                                    height: height * .18,
-                                    width: width * .3,
-                                    placeholder: (context, url) => Container(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.amber,
-                                        size: 50,
+                                  errorWidget: (context, url, error) => Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        article.title.toString(),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: isDarkMode ? Colors.white : Colors.black,
+                                        ),
                                       ),
-                                    ),
-                                    errorWidget: (context, url, error) => Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
-                                    ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        article.description.toString(),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: isDarkMode ? Colors.white70 : Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            article.source!.name.toString(),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: isDarkMode ? Colors.white : Colors.black,
+                                            ),
+                                          ),
+                                          Text(
+                                            format.format(dateTime),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: isDarkMode ? Colors.white : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          article.title.toString(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: isDarkMode ? Colors.white : Colors.black,
-                                          ),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          article.description.toString(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            color: isDarkMode ? Colors.white70 : Colors.grey[600],
-                                          ),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              article.source!.name.toString(),
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: isDarkMode ? Colors.white : Colors.black,
-                                              ),
-                                            ),
-                                            Text(
-                                              format.format(dateTime),
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: isDarkMode ? Colors.white : Colors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             ),

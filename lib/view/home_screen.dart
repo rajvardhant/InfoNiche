@@ -52,23 +52,26 @@ class _HomeScreenState extends State<HomeScreen> {
             Get.to(() => const CategoriesScreen());
           },
           icon: Icon(Icons.drag_indicator,
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
-          ),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
         ),
         title: Text(
           'InfoNiche',
           style: GoogleFonts.poppins(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
-          ),
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
         ),
         actions: [
           PopupMenuButton<FilterList>(
             initialValue: selectedMenu,
             icon: Icon(Icons.more_vert,
-              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
-            ),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black),
             onSelected: (FilterList item) {
               setState(() {
                 selectedMenu = item;
@@ -177,7 +180,7 @@ class _HomeContentState extends State<HomeContent> {
         children: [
           Container(
             height: height * .5,
-            width: width*2,
+            width: width * 2,
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: FutureBuilder<NewsChannelHeadlinesModel>(
               future: newsViewModel.fetchNewChannelHeadlinesApi(name),
@@ -190,7 +193,8 @@ class _HomeContentState extends State<HomeContent> {
                   return Center(
                     child: Text('Error: ${snapshot.error}'),
                   );
-                } else if (!snapshot.hasData || snapshot.data!.articles == null) {
+                } else if (!snapshot.hasData ||
+                    snapshot.data!.articles == null) {
                   return const Center(
                     child: Text('No articles available'),
                   );
@@ -202,103 +206,141 @@ class _HomeContentState extends State<HomeContent> {
                   itemBuilder: (context, index) {
                     DateTime dateTime = DateTime.parse(
                         snapshot.data!.articles![index].publishedAt.toString());
-                    return Container(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            height: height * 0.5,
-                            width: width * .9,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: height * .02,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: CachedNetworkImage(
-                                imageUrl: snapshot.data!.articles![index].urlToImage
-                                        .toString() ??
-                                    '',
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.amber,
-                                    size: 50,
+                    return InkWell(
+                      onTap: () {
+                        Get.to(NewsDetailScreen(
+                          newImage: snapshot.data!.articles![index].urlToImage
+                              .toString(),
+                          newsTitle:
+                              snapshot.data!.articles![index].title.toString(),
+                          newsDate: snapshot.data!.articles![index].publishedAt
+                              .toString(),
+                          author:
+                              snapshot.data!.articles![index].author.toString(),
+                          description: snapshot
+                              .data!.articles![index].description
+                              .toString(),
+                          content: snapshot.data!.articles![index].content
+                              .toString(),
+                          source: snapshot.data!.articles![index].source!.name
+                              .toString(),
+                        ));
+                      },
+                      child: Container(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: height * 0.5,
+                              width: width * .9,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: height * .02,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot
+                                          .data!.articles![index].urlToImage
+                                          .toString() ??
+                                      '',
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.amber,
+                                      size: 50,
+                                    ),
                                   ),
+                                  errorWidget: (context, error, stackTrace) {
+                                    return const Icon(Icons.error);
+                                  },
                                 ),
-                                errorWidget: (context, error, stackTrace) {
-                                  return const Icon(Icons.error);
-                                },
                               ),
                             ),
-                          ),
-                          Positioned(
-                            bottom: 20,
-                            child: Card(
-                              elevation: 5,
-                              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Container(
-                                alignment: Alignment.bottomCenter,
-                                padding: const EdgeInsets.all(15),
-                                height: height * .18,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: width * 0.7,
-                                      child: Text(
-                                        snapshot.data!.articles![index].title
-                                            .toString(),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w700,
-                                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                            Positioned(
+                              bottom: 20,
+                              child: Card(
+                                elevation: 5,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.grey[800]
+                                    : Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Container(
+                                  alignment: Alignment.bottomCenter,
+                                  padding: const EdgeInsets.all(15),
+                                  height: height * .18,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: width * 0.7,
+                                        child: Text(
+                                          snapshot.data!.articles![index].title
+                                              .toString(),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w700,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      width: width * 0.7,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            snapshot.data!.articles![index].source!
-                                                .name
-                                                .toString(),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                                      const Spacer(),
+                                      Container(
+                                        width: width * 0.7,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              snapshot.data!.articles![index]
+                                                  .source!.name
+                                                  .toString(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                            format.format(dateTime),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                                            Text(
+                                              format.format(dateTime),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -319,7 +361,8 @@ class _HomeContentState extends State<HomeContent> {
                   return Center(
                     child: Text('Error: ${snapshot.error}'),
                   );
-                } else if (!snapshot.hasData || snapshot.data!.articles == null) {
+                } else if (!snapshot.hasData ||
+                    snapshot.data!.articles == null) {
                   return const Center(
                     child: Text('No articles available'),
                   );
@@ -331,8 +374,10 @@ class _HomeContentState extends State<HomeContent> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     final article = snapshot.data!.articles![index];
-                    DateTime dateTime = DateTime.parse(article.publishedAt.toString());
-                    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+                    DateTime dateTime =
+                        DateTime.parse(article.publishedAt.toString());
+                    bool isDarkMode =
+                        Theme.of(context).brightness == Brightness.dark;
 
                     return InkWell(
                       onTap: () {
@@ -347,7 +392,8 @@ class _HomeContentState extends State<HomeContent> {
                         ));
                       },
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Card(
                           elevation: 3,
                           shape: RoundedRectangleBorder(
@@ -382,7 +428,8 @@ class _HomeContentState extends State<HomeContent> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         article.title.toString(),
@@ -391,7 +438,9 @@ class _HomeContentState extends State<HomeContent> {
                                         style: GoogleFonts.poppins(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
-                                          color: isDarkMode ? Colors.white : Colors.black,
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : Colors.black,
                                         ),
                                       ),
                                       SizedBox(height: 8),
@@ -401,19 +450,24 @@ class _HomeContentState extends State<HomeContent> {
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.poppins(
                                           fontSize: 12,
-                                          color: isDarkMode ? Colors.white70 : Colors.grey[600],
+                                          color: isDarkMode
+                                              ? Colors.white70
+                                              : Colors.grey[600],
                                         ),
                                       ),
                                       SizedBox(height: 8),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             article.source!.name.toString(),
                                             style: GoogleFonts.poppins(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
-                                              color: isDarkMode ? Colors.white : Colors.black,
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
                                             ),
                                           ),
                                           Text(
@@ -421,7 +475,9 @@ class _HomeContentState extends State<HomeContent> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
-                                              color: isDarkMode ? Colors.white : Colors.black,
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
                                             ),
                                           ),
                                         ],

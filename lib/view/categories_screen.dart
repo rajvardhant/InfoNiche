@@ -122,72 +122,87 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         DateTime dateTime = DateTime.parse(
                           snapshot.data!.articles![index].publishedAt.toString(),
                         );
-                        return Card(
-                          elevation: 5,
-                          margin: const EdgeInsets.only(bottom: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: CachedNetworkImage(
-                                    imageUrl: snapshot.data!.articles![index].urlToImage.toString(),
-                                    fit: BoxFit.cover,
-                                    height: height * 0.25,
-                                    width: double.infinity,
-                                    placeholder: (context, url) => spinKit2,
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error_outline, color: Colors.red),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  snapshot.data!.articles![index].title.toString(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  snapshot.data!.articles![index].description.toString(),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      snapshot.data!.articles![index].source!.name.toString(),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                        return InkWell(
+                          onTap: () {
+                            Get.to(() => NewsDetailScreen(
+                              newImage: snapshot.data!.articles![index].urlToImage.toString(),
+                              // newsImage: snapshot.data!.articles![index].urlToImage.toString(),
+                              newsTitle: snapshot.data!.articles![index].title.toString(),
+                              // newsDate: format.format(dateTime),
+                              newsDate: snapshot.data!.articles![index].publishedAt.toString(),
+                              author: snapshot.data!.articles![index].author.toString(),
+                              description: snapshot.data!.articles![index].description.toString(),
+                              content: snapshot.data!.articles![index].content.toString(),
+                              source: snapshot.data!.articles![index].source!.name.toString(),
+                            ));
+                          },
+                          child: Card(
+                            elevation: 5,
+                            margin: const EdgeInsets.only(bottom: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: CachedNetworkImage(
+                                      imageUrl: snapshot.data!.articles![index].urlToImage.toString(),
+                                      fit: BoxFit.cover,
+                                      height: height * 0.25,
+                                      width: double.infinity,
+                                      placeholder: (context, url) => spinKit2,
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error_outline, color: Colors.red),
                                     ),
-                                    Text(
-                                      format.format(dateTime),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-                                      ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    snapshot.data!.articles![index].title.toString(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                     ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    snapshot.data!.articles![index].description.toString(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        snapshot.data!.articles![index].source!.name.toString(),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        format.format(dateTime),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );

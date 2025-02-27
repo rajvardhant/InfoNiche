@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
+import '../controller/bookmark_controller.dart';
 
 class NewsDetailScreen extends StatefulWidget {
   final String newImage;
@@ -29,16 +32,75 @@ class NewsDetailScreen extends StatefulWidget {
 
 class _NewsDetailScreenState extends State<NewsDetailScreen> {
   final format = DateFormat('MMM dd, yyyy');
+  bool isLiked = false;
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height * 1;
-    // final width = MediaQuery.of(context).size.width * 1;
+    final bookmarkController = Get.put(BookmarkController());
     DateTime dateTime = DateTime.parse(widget.newsDate);
+    
     return Scaffold(
       appBar: AppBar(
-
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border,
+              color: isLiked ? Colors.red : Colors.grey,
+            ),
+            onPressed: () {
+              setState(() {
+                isLiked = !isLiked;
+              });
+              Get.snackbar(
+                isLiked ? 'Liked!' : 'Unliked',
+                isLiked ? 'Added to your favorites' : 'Removed from favorites',
+                snackPosition: SnackPosition.BOTTOM,
+                duration: Duration(seconds: 2),
+              );
+            },
+          ),
+          Obx(() {
+            final isBookmarked = bookmarkController.isBookmarked(widget.newsTitle);
+            return IconButton(
+              icon: Icon(
+                isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                color: isBookmarked ? Colors.blue : Colors.grey,
+              ),
+              onPressed: () {
+                final newsItem = {
+                  'newImage': widget.newImage,
+                  'newsTitle': widget.newsTitle,
+                  'newsDate': widget.newsDate,
+                  'author': widget.author,
+                  'description': widget.description,
+                  'content': widget.content,
+                  'source': widget.source,
+                };
+                bookmarkController.toggleBookmark(newsItem);
+                Get.snackbar(
+                  isBookmarked ? 'Removed from Bookmarks' : 'Added to Bookmarks',
+                  isBookmarked ? 'Article removed from your bookmarks' : 'Article saved to your bookmarks',
+                  snackPosition: SnackPosition.BOTTOM,
+                  duration: Duration(seconds: 2),
+                );
+              },
+            );
+          }),
+          IconButton(
+            icon: Icon(Icons.share, color: Colors.grey),
+            onPressed: () {
+              Share.share('Check out this news: ${widget.newsTitle}\n\n${widget.description}');
+            },
+          ),
+          SizedBox(width: 10),
+        ],
       ),
       body: Stack(
         children: [

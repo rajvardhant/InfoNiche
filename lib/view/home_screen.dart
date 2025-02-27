@@ -51,14 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             Get.to(() => const CategoriesScreen());
           },
-          icon: Icon(Icons.drag_indicator, 
+          icon: Icon(Icons.drag_indicator,
             color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
           ),
         ),
         title: Text(
           'InfoNiche',
           style: GoogleFonts.poppins(
-            fontSize: 24, 
+            fontSize: 24,
             fontWeight: FontWeight.w700,
             color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
           ),
@@ -235,7 +235,7 @@ class _HomeContentState extends State<HomeContent> {
                             bottom: 20,
                             child: Card(
                               elevation: 5,
-                              color: Colors.white,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),

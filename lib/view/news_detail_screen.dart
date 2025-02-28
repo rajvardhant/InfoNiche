@@ -34,12 +34,33 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
   final format = DateFormat('MMM dd, yyyy');
   bool isLiked = false;
 
+  Future<void> _shareNews() async {
+    try {
+      final String shareText = '''
+${widget.newsTitle}
+
+${widget.description}
+
+Source: ${widget.source}
+''';
+      await Share.share(shareText);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Unable to share the news. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height * 1;
     final bookmarkController = Get.put(BookmarkController());
     DateTime dateTime = DateTime.parse(widget.newsDate);
-    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -95,9 +116,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
           }),
           IconButton(
             icon: Icon(Icons.share, color: Colors.grey),
-            onPressed: () {
-              Share.share('Check out this news: ${widget.newsTitle}\n\n${widget.description}');
-            },
+            onPressed: _shareNews,
           ),
           SizedBox(width: 10),
         ],

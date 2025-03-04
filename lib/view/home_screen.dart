@@ -204,15 +204,15 @@ class _HomeContentState extends State<HomeContent> {
     VoidCallback onTap,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: GestureDetector(
         onTap: onTap,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: color.withOpacity(0.15),
                 shape: BoxShape.circle,
@@ -228,16 +228,16 @@ class _HomeContentState extends State<HomeContent> {
               child: Icon(
                 icon,
                 color: color,
-                size: 24,
+                size: 32,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(
               formatTitleText(title),
               textAlign: TextAlign.center,
               maxLines: 2,
               style: GoogleFonts.poppins(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 height: 1.2,
                 color: Theme.of(context).brightness == Brightness.dark
@@ -594,58 +594,61 @@ class _HomeContentState extends State<HomeContent> {
           // Current Affairs Options
           Padding(padding: EdgeInsets.all(5)),
           Container(
-            height: 90,
-            margin: const EdgeInsets.only(bottom: 11),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.grey[900]
-                  : Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              children: [
-                const SizedBox(width: 8),
-                _buildCircularOption(
-                  context,
-                  'International',
-                  Icons.public,
-                  Colors.blue,
-                  () => Get.to(() => const CurrentAffairsScreen(type: 'international')),
-                ),
-                _buildCircularOption(
-                  context,
-                  'India',
-                  Icons.flag,
-                  Colors.orange,
-                  () => Get.to(() => const CurrentAffairsScreen(type: 'india')),
-                ),
-                _buildCircularOption(
-                  context,
-                  'Quiz',
-                  Icons.quiz,
-                  Colors.purple,
-                  () => Get.to(() => const QuizScreen()),
-                ),
-                _buildCircularOption(
-                  context,
-                  'History',
-                  Icons.history_edu,
-                  Colors.green,
-                  () => Get.to(() => const CurrentAffairsScreen(type: 'history')),
-                ),
-                _buildCircularOption(
-                  context,
-                  'Date',
-                  Icons.calendar_today,
-                  Colors.red,
-                  () => Get.to(() => const CustomDateScreen()),
-                ),
-                const SizedBox(width: 8),
-              ],
-            ),
-          ),
+
+  height: 90,
+  margin: EdgeInsets.all(15),
+  decoration: BoxDecoration(
+    color: Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[900]
+        : Colors.grey[100],
+    borderRadius: BorderRadius.circular(12), // Increased for smoother edges
+  ),
+  child: Center( // Ensuring content is centered
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 12), // Added padding for spacing
+      children: [
+        _buildCircularOption(
+          context,
+          'International',
+          Icons.public,
+          Colors.blue,
+          () => Get.to(() => const CurrentAffairsScreen(type: 'international')),
+        ),
+        _buildCircularOption(
+          context,
+          'India',
+          Icons.flag,
+          Colors.orange,
+          () => Get.to(() => const CurrentAffairsScreen(type: 'india')),
+        ),
+        _buildCircularOption(
+          context,
+          'Quiz',
+          Icons.quiz,
+          Colors.purple,
+          () => Get.to(() => const QuizScreen()),
+        ),
+        _buildCircularOption(
+          context,
+          'History',
+          Icons.history_edu,
+          Colors.green,
+          () => Get.to(() => const CurrentAffairsScreen(type: 'history')),
+        ),
+        _buildCircularOption(
+          context,
+          'Date',
+          Icons.calendar_today,
+          Colors.red,
+          () => Get.to(() => const CustomDateScreen()),
+        ),
+      ],
+    ),
+  ),
+),
+
           // News Categories
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -799,8 +802,7 @@ class _HomeContentState extends State<HomeContent> {
               },
             ),
           ),
-        ],
-      ),
+            ],   ),
     );
   }
 }

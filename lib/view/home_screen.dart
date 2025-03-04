@@ -624,12 +624,7 @@ class _HomeContentState extends State<HomeContent> {
                     Icons.quiz,
                     () => Get.to(() => const QuizScreen()),
                   ),
-                  _buildCircularOption(
-                    context,
-                    'Date',
-                    Icons.calendar_today,
-                    () => Get.to(() => const CustomDateScreen()),
-                  ),
+                  
                   _buildCircularOption(
                     context,
                     'Historical News',

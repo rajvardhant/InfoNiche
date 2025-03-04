@@ -18,6 +18,7 @@ import 'package:news_app/view/search_screen.dart';
 import 'package:news_app/view_model/news_view_model.dart';
 import '../model/categories_new_model.dart';
 import '../model/news_channel_headlines_modle.dart';
+import '../model/search_news_model.dart';
 import 'categories_screen.dart';
 import 'package:news_app/utils/string_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -73,6 +74,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   : Colors.black),
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.search,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: NewsSearchDelegate(),
+              );
+            },
+          ),
           PopupMenuButton<FilterList>(
             initialValue: selectedMenu,
             icon: Icon(Icons.more_vert,
@@ -624,7 +637,7 @@ class _HomeContentState extends State<HomeContent> {
                     Icons.quiz,
                     () => Get.to(() => const QuizScreen()),
                   ),
-                  
+
                   _buildCircularOption(
                     context,
                     'Historical News',
@@ -786,6 +799,202 @@ class _HomeContentState extends State<HomeContent> {
                   },
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NewsSearchDelegate extends SearchDelegate<String> {
+  final newsViewModel = Get.find<NewsViewModel>();
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    if (query.trim().isEmpty) {
+      return Center(
+        child: Text(
+          'Please enter a search term',
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            color: Colors.grey[600],
+          ),
+        ),
+      );
+    }
+
+    return FutureBuilder<SearchNewsModel>(
+      future: newsViewModel.searchNews(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          );
+        }
+
+        final articles = snapshot.data?.articles;
+        if (articles == null || articles.isEmpty) {
+          return Center(
+            child: Text(
+              'No results found for "$query"',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: articles.length,
+          itemBuilder: (context, index) {
+            final article = articles[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: InkWell(
+                onTap: () {
+                  Get.to(() => NewsDetailScreen(
+                    newImage: article.urlToImage ?? '',
+                    newsTitle: article.title ?? '',
+                    newsDate: article.publishedAt ?? '',
+                    author: article.author ?? 'Unknown',
+                    description: article.description ?? '',
+                    content: article.content ?? '',
+                    source: article.source?.name ?? '',
+                  ));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (article.urlToImage != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: article.urlToImage!,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                const Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),
+                        ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              article.title ?? '',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              article.description ?? '',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.person_outline,
+                                    size: 16, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    article.author ?? 'Unknown',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'Search for news',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try searching for topics, headlines, or sources',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.grey[400],
             ),
           ),
         ],

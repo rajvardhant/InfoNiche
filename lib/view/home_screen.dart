@@ -15,6 +15,7 @@ import 'package:news_app/view/news_detail_screen.dart';
 import 'package:news_app/view/profile_screen.dart';
 import 'package:news_app/view/quiz_screen.dart';
 import 'package:news_app/view/search_screen.dart';
+import 'package:news_app/view/twitter_feed_screen.dart';
 import 'package:news_app/view_model/news_view_model.dart';
 import '../model/categories_new_model.dart';
 import '../model/news_channel_headlines_modle.dart';
@@ -45,8 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _pages = [
       const HomeContent(),
-      const SearchScreen(),
       const BookmarkScreen(),
+      const TwitterFeedScreen(),
       const ProfileScreen(),
     ];
   }
@@ -158,12 +159,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.search,
-                text: 'Search',
-              ),
-              GButton(
                 icon: Icons.bookmark_add_outlined,
                 text: 'BookMark',
+              ),
+              GButton(
+                icon: Icons.api_rounded,
+                text: 'Twitter',
               ),
               GButton(
                 icon: Icons.person,

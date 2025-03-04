@@ -5,10 +5,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:news_app/controller/language_controller.dart';
 import 'package:news_app/view/bookmark_screen.dart';
+import 'package:news_app/view/current_affairs_screen.dart';
+import 'package:news_app/view/custom_date_screen.dart';
 import 'package:news_app/view/news_detail_screen.dart';
 import 'package:news_app/view/profile_screen.dart';
+import 'package:news_app/view/quiz_screen.dart';
 import 'package:news_app/view/search_screen.dart';
 import 'package:news_app/view_model/news_view_model.dart';
 import '../model/categories_new_model.dart';
@@ -170,25 +174,263 @@ class _HomeContentState extends State<HomeContent> {
   final format = DateFormat('MMM dd, yyyy');
   String name = 'bbc-news';
 
+  String formatTitleText(String text) {
+    if (text.length <= 10) return text;
+
+    List<String> words = text.split(' ');
+    if (words.length <= 1) return text;
+
+    String firstWord = words[0];
+    // Get initials of remaining words and join them
+    String restInitials = words.skip(1)
+        .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
+        .join('');
+
+    // If there are no initials, just return the first word
+    if (restInitials.isEmpty) return firstWord;
+
+    // Add a bullet point between initials if there are multiple
+    String formattedInitials = restInitials.split('').join('·');
+
+    return '$firstWord\n$formattedInitials';
+  }
+
+  Widget _buildCircularOption(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.15),
+                shape: BoxShape.circle,
+                border: Border.all(color: color, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              formatTitleText(title),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.poppins(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                height: 1.2,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    final width = MediaQuery.of(context).size.width;
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 8),
+          width: width * 0.85,
+          child: Shimmer.fromColors(
+            period: const Duration(milliseconds: 1500), // Slower animation
+            baseColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[850]!
+                : Colors.grey[300]!,
+            highlightColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[700]!
+                : Colors.grey[100]!,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 20,
+                            width: width * 0.6,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            height: 16,
+                            width: width * 0.4,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNewsShimmer() {
+    return ListView.builder(
+      itemCount: 4,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Shimmer.fromColors(
+            period: const Duration(milliseconds: 1500), // Slower animation
+            baseColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[850]!
+                : Colors.grey[300]!,
+            highlightColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[700]!
+                : Colors.grey[100]!,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        margin: EdgeInsets.only(bottom: 8, right: 20),
+                      ),
+                      Container(
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        margin: EdgeInsets.only(bottom: 4, right: 50),
+                      ),
+                      Container(
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        margin: EdgeInsets.only(bottom: 4, right: 30),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 14,
+                            width: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          Container(
+                            height: 14,
+                            width: 60,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       child: Column(
         children: [
           Container(
-            height: height * .5,
-            width: width * 2,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            height: height * .42,
+            width: width,
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: FutureBuilder<NewsChannelHeadlinesModel>(
               future: newsViewModel.fetchNewChannelHeadlinesApi(name),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return _buildShimmerLoading();
                 } else if (snapshot.hasError) {
                   return Center(
                     child: Text('Error: ${snapshot.error}'),
@@ -231,10 +473,10 @@ class _HomeContentState extends State<HomeContent> {
                           alignment: Alignment.center,
                           children: [
                             Container(
-                              height: height * 0.5,
-                              width: width * .9,
+                              height: height * 0.42,
+                              width: width * .85,
                               padding: EdgeInsets.symmetric(
-                                horizontal: height * .02,
+                                horizontal: height * .01,
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
@@ -277,14 +519,14 @@ class _HomeContentState extends State<HomeContent> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Container(
-                                        width: width * 0.7,
+                                        width: width * 0.65,
                                         child: Text(
                                           snapshot.data!.articles![index].title
                                               .toString(),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.poppins(
-                                            fontSize: 17,
+                                            fontSize: 15,
                                             fontWeight: FontWeight.w700,
                                             color:
                                                 Theme.of(context).brightness ==
@@ -296,7 +538,7 @@ class _HomeContentState extends State<HomeContent> {
                                       ),
                                       const Spacer(),
                                       Container(
-                                        width: width * 0.7,
+                                        width: width * 0.65,
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -348,15 +590,69 @@ class _HomeContentState extends State<HomeContent> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8),
+          // Current Affairs Options
+          Padding(padding: EdgeInsets.all(5)),
+          Container(
+            height: 90,
+            margin: const EdgeInsets.only(bottom: 11),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[900]
+                  : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              children: [
+                const SizedBox(width: 8),
+                _buildCircularOption(
+                  context,
+                  'International',
+                  Icons.public,
+                  Colors.blue,
+                  () => Get.to(() => const CurrentAffairsScreen(type: 'international')),
+                ),
+                _buildCircularOption(
+                  context,
+                  'India',
+                  Icons.flag,
+                  Colors.orange,
+                  () => Get.to(() => const CurrentAffairsScreen(type: 'india')),
+                ),
+                _buildCircularOption(
+                  context,
+                  'Quiz',
+                  Icons.quiz,
+                  Colors.purple,
+                  () => Get.to(() => const QuizScreen()),
+                ),
+                _buildCircularOption(
+                  context,
+                  'History',
+                  Icons.history_edu,
+                  Colors.green,
+                  () => Get.to(() => const CurrentAffairsScreen(type: 'history')),
+                ),
+                _buildCircularOption(
+                  context,
+                  'Date',
+                  Icons.calendar_today,
+                  Colors.red,
+                  () => Get.to(() => const CustomDateScreen()),
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
+          ),
+          // News Categories
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: FutureBuilder<categoriesNewsModel>(
               future: newsViewModel.fetchCategoriesNewsApi('General'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return _buildNewsShimmer();
                 } else if (snapshot.hasError) {
                   return Center(
                     child: Text('Error: ${snapshot.error}'),

@@ -10,6 +10,7 @@ import 'package:news_app/controller/language_controller.dart';
 import 'package:news_app/view/bookmark_screen.dart';
 import 'package:news_app/view/current_affairs_screen.dart';
 import 'package:news_app/view/custom_date_screen.dart';
+import 'package:news_app/view/historical_news_screen.dart';
 import 'package:news_app/view/news_detail_screen.dart';
 import 'package:news_app/view/profile_screen.dart';
 import 'package:news_app/view/quiz_screen.dart';
@@ -176,73 +177,65 @@ class _HomeContentState extends State<HomeContent> {
   String name = 'bbc-news';
 
   String formatTitleText(String text) {
-    if (text.length <= 10) return text;
-
-    List<String> words = text.split(' ');
-    if (words.length <= 1) return text;
-
-    String firstWord = words[0];
-    // Get initials of remaining words and join them
-    String restInitials = words.skip(1)
-        .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
-        .join('');
-
-    // If there are no initials, just return the first word
-    if (restInitials.isEmpty) return firstWord;
-
-    // Add a bullet point between initials if there are multiple
-    String formattedInitials = restInitials.split('').join('·');
-
-    return '$firstWord\n$formattedInitials';
+    return text;
   }
 
   Widget _buildCircularOption(
     BuildContext context,
     String title,
     IconData icon,
-    Color color,
     VoidCallback onTap,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? Colors.blue[300]! : Theme.of(context).primaryColor;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: GestureDetector(
         onTap: onTap,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: 60,
+              height: 60,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
+                color: isDark
+                    ? Colors.white.withOpacity(0.1)
+                    : primaryColor.withOpacity(0.15),
                 shape: BoxShape.circle,
-                border: Border.all(color: color, width: 1.5),
+                border: Border.all(
+                  color: primaryColor,
+                  width: 2.0,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.2),
-                    blurRadius: 4,
+                    color: primaryColor.withOpacity(isDark ? 0.3 : 0.2),
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Icon(
                 icon,
-                color: color,
-                size: 32,
+                color: primaryColor,
+                size: 28,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              formatTitleText(title),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                height: 1.2,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
+            const SizedBox(height: 6),
+            SizedBox(
+              width: 90,
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.visible,
+                style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.3,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
             ),
           ],
@@ -330,7 +323,7 @@ class _HomeContentState extends State<HomeContent> {
     return ListView.builder(
       itemCount: 4,
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -418,6 +411,7 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -493,7 +487,7 @@ class _HomeContentState extends State<HomeContent> {
                                       size: 50,
                                     ),
                                   ),
-                                  errorWidget: (context, error, stackTrace) {
+                                  errorWidget: (context, url, error) {
                                     return const Icon(Icons.error);
                                   },
                                 ),
@@ -503,10 +497,7 @@ class _HomeContentState extends State<HomeContent> {
                               bottom: 20,
                               child: Card(
                                 elevation: 5,
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.grey[800]
-                                    : Colors.white,
+                                color: isDark ? Colors.grey[800] : Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -529,11 +520,7 @@ class _HomeContentState extends State<HomeContent> {
                                           style: GoogleFonts.poppins(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w700,
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                            color: isDark ? Colors.white : Colors.black,
                                           ),
                                         ),
                                       ),
@@ -553,11 +540,7 @@ class _HomeContentState extends State<HomeContent> {
                                               style: GoogleFonts.poppins(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                                color: isDark ? Colors.white : Colors.black,
                                               ),
                                             ),
                                             Text(
@@ -567,11 +550,7 @@ class _HomeContentState extends State<HomeContent> {
                                               style: GoogleFonts.poppins(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                                color: isDark ? Colors.white : Colors.black,
                                               ),
                                             ),
                                           ],
@@ -594,61 +573,63 @@ class _HomeContentState extends State<HomeContent> {
           // Current Affairs Options
           Padding(padding: EdgeInsets.all(5)),
           Container(
-
-  height: 90,
-  margin: EdgeInsets.all(15),
-  decoration: BoxDecoration(
-    color: Theme.of(context).brightness == Brightness.dark
-        ? Colors.grey[900]
-        : Colors.grey[100],
-    borderRadius: BorderRadius.circular(12), // Increased for smoother edges
-  ),
-  child: Center( // Ensuring content is centered
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 12), // Added padding for spacing
-      children: [
-        _buildCircularOption(
-          context,
-          'International',
-          Icons.public,
-          Colors.blue,
-          () => Get.to(() => const CurrentAffairsScreen(type: 'international')),
-        ),
-        _buildCircularOption(
-          context,
-          'India',
-          Icons.flag,
-          Colors.orange,
-          () => Get.to(() => const CurrentAffairsScreen(type: 'india')),
-        ),
-        _buildCircularOption(
-          context,
-          'Quiz',
-          Icons.quiz,
-          Colors.purple,
-          () => Get.to(() => const QuizScreen()),
-        ),
-        _buildCircularOption(
-          context,
-          'History',
-          Icons.history_edu,
-          Colors.green,
-          () => Get.to(() => const CurrentAffairsScreen(type: 'history')),
-        ),
-        _buildCircularOption(
-          context,
-          'Date',
-          Icons.calendar_today,
-          Colors.red,
-          () => Get.to(() => const CustomDateScreen()),
-        ),
-      ],
-    ),
-  ),
-),
-
+            height: 100,
+            margin: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey[850] : Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark ? Colors.black.withOpacity(0.3) : Colors.grey.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                children: [
+                  _buildCircularOption(
+                    context,
+                    'International',
+                    Icons.public,
+                    () => Get.to(() => const CurrentAffairsScreen(type: 'international')),
+                  ),
+                  _buildCircularOption(
+                    context,
+                    'India',
+                    Icons.flag,
+                    () => Get.to(() => const CurrentAffairsScreen(type: 'india')),
+                  ),
+                  _buildCircularOption(
+                    context,
+                    'Quiz',
+                    Icons.quiz,
+                    () => Get.to(() => const QuizScreen()),
+                  ),
+                  _buildCircularOption(
+                    context,
+                    'Date',
+                    Icons.calendar_today,
+                    () => Get.to(() => const CustomDateScreen()),
+                  ),
+                  _buildCircularOption(
+                    context,
+                    'Historical News',
+                    Icons.history,
+                    () => Get.to(() => HistoricalNewsScreen()),
+                  ),
+                ],
+              ),
+            ),
+          ),
           // News Categories
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -802,7 +783,8 @@ class _HomeContentState extends State<HomeContent> {
               },
             ),
           ),
-            ],   ),
+        ],
+      ),
     );
   }
 }

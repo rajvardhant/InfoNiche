@@ -20,6 +20,7 @@ import '../model/categories_new_model.dart';
 import '../model/news_channel_headlines_modle.dart';
 import 'categories_screen.dart';
 import 'package:news_app/utils/string_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum FilterList { bbcNews, bloomberg, independent, retuers, cnn, argaam }
 
@@ -606,7 +607,16 @@ class _HomeContentState extends State<HomeContent> {
                     context,
                     'India',
                     Icons.flag,
-                    () => Get.to(() => const CurrentAffairsScreen(type: 'india')),
+                    () async {
+                      final Uri url = Uri.parse('https://www.gktoday.in/current-affairs/');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Could not launch GK Today website')),
+                        );
+                      }
+                    },
                   ),
                   _buildCircularOption(
                     context,
@@ -742,7 +752,6 @@ class _HomeContentState extends State<HomeContent> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
-                                            flex: 2,
                                             child: Text(
                                               StringUtils.formatAuthorName(
                                                 article.author ?? 'Unknown',
@@ -750,21 +759,22 @@ class _HomeContentState extends State<HomeContent> {
                                               style: GoogleFonts.poppins(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500,
+                                                color: isDarkMode
+                                                    ? Colors.white70
+                                                    : Colors.grey[700],
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Text(
-                                              format.format(dateTime),
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
+                                          Text(
+                                            format.format(dateTime),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              color: isDarkMode
+                                                  ? Colors.white70
+                                                  : Colors.grey[700],
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ],

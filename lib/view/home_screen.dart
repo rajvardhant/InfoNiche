@@ -18,6 +18,7 @@ import 'package:news_app/view_model/news_view_model.dart';
 import '../model/categories_new_model.dart';
 import '../model/news_channel_headlines_modle.dart';
 import 'categories_screen.dart';
+import 'package:news_app/utils/string_utils.dart';
 
 enum FilterList { bbcNews, bloomberg, independent, retuers, cnn, argaam }
 
@@ -756,24 +757,30 @@ class _HomeContentState extends State<HomeContent> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            article.source!.name.toString(),
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: isDarkMode
-                                                  ? Colors.white
-                                                  : Colors.black,
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              StringUtils.formatAuthorName(
+                                                article.author ?? 'Unknown',
+                                              ),
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
                                           ),
-                                          Text(
-                                            format.format(dateTime),
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: isDarkMode
-                                                  ? Colors.white
-                                                  : Colors.black,
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              format.format(dateTime),
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
                                           ),
                                         ],

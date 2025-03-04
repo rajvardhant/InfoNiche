@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import '../controller/bookmark_controller.dart';
+import '../utils/string_utils.dart';
 
 class NewsDetailScreen extends StatefulWidget {
   final String newImage;
@@ -166,11 +167,14 @@ Source: ${widget.source}
                   children: [
                     Expanded(
                       child: Text(
-                        widget.source,
+                        StringUtils.formatAuthorName(
+                          widget.author ?? 'Unknown',
+                          fullName: true,  // Show full name in details screen
+                        ),
                         style: GoogleFonts.poppins(
-                            fontSize: 15,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     Text(

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/model/categories_new_model.dart';
+import 'package:news_app/utils/string_utils.dart';
 
 import '../view_model/news_view_model.dart';
 import 'home_screen.dart';
@@ -184,19 +185,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        snapshot.data!.articles![index].source!.name.toString(),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
-                                          fontWeight: FontWeight.w600,
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(
+                                          StringUtils.formatAuthorName(
+                                            snapshot.data!.articles![index].author ?? 'Unknown',
+                                          ),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
-                                      Text(
-                                        format.format(dateTime),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 12,
-                                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.black87,
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          format.format(DateTime.parse(
+                                            snapshot.data!.articles![index].publishedAt.toString(),
+                                          )),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
                                       ),
                                     ],

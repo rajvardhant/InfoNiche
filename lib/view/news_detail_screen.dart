@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../controller/bookmark_controller.dart';
 import '../utils/string_utils.dart';
 
@@ -34,6 +35,8 @@ class NewsDetailScreen extends StatefulWidget {
 class _NewsDetailScreenState extends State<NewsDetailScreen> {
   final format = DateFormat('MMM dd, yyyy');
   bool isLiked = false;
+  final FlutterTts flutterTts = FlutterTts();
+  bool isSpeaking = false;
 
   Future<void> _shareNews() async {
     try {
@@ -58,6 +61,44 @@ Source: ${widget.source}
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initTts();
+  }
+
+  Future<void> _initTts() async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setPitch(1.0);
+    await flutterTts.setSpeechRate(0.5);
+    
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        isSpeaking = false;
+      });
+    });
+  }
+
+  Future<void> _speak() async {
+    if (isSpeaking) {
+      await flutterTts.stop();
+      setState(() {
+        isSpeaking = false;
+      });
+    } else {
+      setState(() {
+        isSpeaking = true;
+      });
+      await flutterTts.speak("${widget.newsTitle}. ${widget.description}");
+    }
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height * 1;
     final bookmarkController = Get.put(BookmarkController());
@@ -71,6 +112,13 @@ Source: ${widget.source}
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              isSpeaking ? Icons.stop_circle : Icons.play_circle_fill,
+              color: Colors.grey,
+            ),
+            onPressed: _speak,
+          ),
           IconButton(
             icon: Icon(
               isLiked ? Icons.favorite : Icons.favorite_border,

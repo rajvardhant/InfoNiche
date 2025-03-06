@@ -18,8 +18,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-    @override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -35,8 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
         Get.off(() => const HomeScreen());
       }
     });
-
   }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height * 1;
@@ -44,25 +43,35 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         child: Column(
-          mainAxisAlignment:MainAxisAlignment.center ,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/news1.png',
+              'assets/images/logo.png',
               fit: BoxFit.cover,
               width: width * 1,
-              height: height *.5,
+              height: height * .5,
             ),
-            SizedBox(height: height * 0.04,),
-            Text('InfoNiche' , style: GoogleFonts.anton(letterSpacing: .6 , color: Colors.grey.shade700, fontSize: 30, fontWeight: FontWeight.w700),),
-            SizedBox(height: height * 0.04,),
-            const SpinKitSpinningLines(
-              color: Colors.blue ,
-                size: 40,
+            SizedBox(
+              height: height * 0.04,
+            ),
+            Text(
+              'InfoNiche',
+              style: GoogleFonts.anton(
+                  letterSpacing: .6,
+                  color: Colors.grey.shade700,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w700),
+            ),
+            SizedBox(
+              height: height * 0.04,
+            ),
+            const SpinKitWaveSpinner(
+              color: Colors.blue,
+              size: 40,
             )
           ],
         ),
       ),
-
     );
   }
 }

@@ -9,9 +9,12 @@ class LanguageController extends GetxController {
   static const Map<String, String> languages = {
     'English': 'en',
     'Hindi': 'hi',
-    'French': 'fr',
     'Spanish': 'es',
-    'German': 'de',
+    'Chinese': 'zh',
+    'Arabic': 'ar',
+    'French': 'fr',
+    'Russian': 'ru',
+    'Japanese': 'ja',
   };
 
   String get currentLanguage => _box.read(_key) ?? 'English';

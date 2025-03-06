@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:news_app/controller/language_controller.dart';
 import 'package:news_app/view/bookmark_screen.dart';
 import 'package:news_app/view/current_affairs_screen.dart';
@@ -810,14 +812,101 @@ class _HomeContentState extends State<HomeContent> {
 
 class NewsSearchDelegate extends SearchDelegate<String> {
   final newsViewModel = Get.find<NewsViewModel>();
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+
+  Future<void> _startListening(BuildContext context) async {
+    if (_isListening) {
+      await _speech.stop();
+      _isListening = false;
+      (context as Element).markNeedsBuild();
+      return;
+    }
+
+    // Request microphone permission
+    var status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Microphone permission is required for voice search'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    bool available = await _speech.initialize(
+      onError: (error) {
+        print('Speech recognition error: $error');
+        _isListening = false;
+        (context as Element).markNeedsBuild();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+      onStatus: (status) {
+        print('Speech recognition status: $status');
+        if (status == 'done' || status == 'notListening') {
+          _isListening = false;
+          (context as Element).markNeedsBuild();
+        }
+      },
+    );
+
+    if (available) {
+      _isListening = true;
+      (context as Element).markNeedsBuild();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Listening... Speak now'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      await _speech.listen(
+        onResult: (result) {
+          query = result.recognizedWords;
+          if (result.finalResult) {
+            showResults(context);
+          }
+        },
+        localeId: 'en_US',
+        cancelOnError: true,
+        partialResults: true,
+        listenMode: stt.ListenMode.confirmation,
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 3),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Speech recognition not available on this device'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
+        icon: Icon(
+          _isListening ? Icons.mic : Icons.mic_none,
+          color: _isListening ? Colors.red : null,
+        ),
+        onPressed: () => _startListening(context),
+      ),
+      IconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
+          _speech.stop();
+          _isListening = false;
         },
       ),
     ];
@@ -900,72 +989,72 @@ class NewsSearchDelegate extends SearchDelegate<String> {
                     source: article.source?.name ?? '',
                   ));
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (article.urlToImage != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: article.urlToImage!,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                const Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                          ),
-                        ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              article.title ?? '',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (article.urlToImage != null)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: article.urlToImage!,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    const Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              article.description ?? '',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.person_outline,
-                                    size: 16, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    article.author ?? 'Unknown',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                                Text(
+                                  article.title ?? '',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  article.description ?? '',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Positioned(
+                      right: 8,
+                      bottom: 8,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.volume_up_outlined,
+                          color: Colors.grey[600],
+                        ),
+                        onPressed: () {
+                          final textToSpeak = '${article.title}. ${article.description}';
+                          // _speak(textToSpeak);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

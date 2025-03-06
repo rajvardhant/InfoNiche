@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../controller/theme_controller.dart';
+import '../controller/language_controller.dart';
 import 'feedback_screen.dart';
 import 'notification_settings_screen.dart';
 import 'static_page.dart';
+import 'language_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -13,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.put(ThemeController());
+    final LanguageController languageController = Get.put(LanguageController());
 
     return Scaffold(
       appBar: AppBar(
@@ -69,13 +72,32 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: const Text('Language'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // TODO: Implement language settings
-              },
+            GetBuilder<LanguageController>(
+              builder: (controller) => ListTile(
+                leading: const Icon(Icons.language),
+                title: const Text('Language'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      controller.currentLanguage,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward_ios),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LanguageScreen(),
+                    ),
+                  );
+                },
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.help),

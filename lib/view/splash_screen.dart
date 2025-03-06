@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/interest_controller.dart';
+import '../controller/user_profile_controller.dart';
 import 'home_screen.dart';
 import 'interest_screen.dart';
+import 'profile_setup_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,13 +23,16 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    final userProfileController = Get.put(UserProfileController());
     final interestController = Get.put(InterestController());
 
     Timer(const Duration(seconds: 2), () {
-      if (interestController.hasSelectedInterests) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+      if (!userProfileController.hasSetupProfile) {
+        Get.off(() => const ProfileSetupScreen());
+      } else if (!interestController.hasSelectedInterests) {
+        Get.off(() => const InterestScreen());
       } else {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const InterestScreen()));
+        Get.off(() => const HomeScreen());
       }
     });
 
@@ -48,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
               height: height *.5,
             ),
             SizedBox(height: height * 0.04,),
-            Text('TOP HEADLINES' , style: GoogleFonts.anton(letterSpacing: .6 , color: Colors.grey.shade700),),
+            Text('InfoNiche' , style: GoogleFonts.anton(letterSpacing: .6 , color: Colors.grey.shade700, fontSize: 30, fontWeight: FontWeight.w700),),
             SizedBox(height: height * 0.04,),
             const SpinKitSpinningLines(
               color: Colors.blue ,

@@ -1,21 +1,156 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 import '../controller/theme_controller.dart';
 import '../controller/language_controller.dart';
+import '../controller/user_profile_controller.dart';
 import 'feedback_screen.dart';
 import 'notification_settings_screen.dart';
 import 'static_page.dart';
 import 'language_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  void _showEditNameDialog(BuildContext context, UserProfileController controller) {
+    final TextEditingController nameController = TextEditingController(text: controller.userName);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Edit Name',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(
+            labelText: 'Your Name',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (nameController.text.trim().isNotEmpty) {
+                controller.updateName(nameController.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showImagePickerDialog(BuildContext context, UserProfileController controller) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.photo_camera),
+            title: const Text('Take a photo'),
+            onTap: () {
+              Navigator.pop(context);
+              controller.pickImage(ImageSource.camera);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Choose from gallery'),
+            onTap: () {
+              Navigator.pop(context);
+              controller.pickImage(ImageSource.gallery);
+            },
+          ),
+          if (controller.profileImagePath != null)
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: const Text('Remove photo', style: TextStyle(color: Colors.red)),
+              onTap: () {
+                Navigator.pop(context);
+                controller.removeProfileImage();
+              },
+            ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileImage(BuildContext context, UserProfileController controller) {
+    if (controller.profileImagePath != null) {
+      return GestureDetector(
+        onTap: () => _showImagePickerDialog(context, controller),
+        child: Hero(
+          tag: 'profile_image',
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: FileImage(File(controller.profileImagePath!)),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => _showImagePickerDialog(context, controller),
+      child: Stack(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundColor:
+                Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            child: Icon(
+              controller.userGender == 'female' ? Icons.face_3 : Icons.face_6,
+              size: 50,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.camera_alt,
+                size: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.put(ThemeController());
     final LanguageController languageController = Get.put(LanguageController());
+    final userController = Get.find<UserProfileController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -28,22 +163,28 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundColor:
-                  Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'User Name',
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
+            GetBuilder<UserProfileController>(
+              builder: (controller) => Column(
+                children: [
+                  _buildProfileImage(context, controller),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        controller.userName,
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showEditNameDialog(context, controller),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 32),

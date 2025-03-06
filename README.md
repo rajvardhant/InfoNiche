@@ -1,16 +1,77 @@
-# news_app
+# News App
 
-A new Flutter project.
+A modern Flutter news application built with GetX state management and MVC architecture.
+
+## Features
+
+- Real-time news updates
+- Current affairs section
+- Interactive quiz system
+- User profile management
+- Custom date-based news search
+- Voice search functionality
+- News sharing capabilities
+- Rating system
+- Dark/Light theme support
+- Offline storage support
+
+## Technology Stack
+
+### Framework
+- Flutter SDK >=3.1.0
+- GetX for state management
+- MVC (Model-View-Controller) architecture
+
+### Key Dependencies
+- `get`: State management and routing
+- `get_storage`: Local storage management
+- `cached_network_image`: Efficient image loading and caching
+- `http`: API communication
+- `google_nav_bar`: Modern bottom navigation
+- `flutter_rating_bar`: Rating functionality
+- `speech_to_text`: Voice search feature
+- `shimmer`: Loading animations
+- `shared_preferences`: Local data persistence
+- `image_picker`: Image selection functionality
+- `permission_handler`: Device permissions management
+
+## Project Structure
+```
+lib/
+  ├── model/         # Data models
+  ├── view/          # UI screens
+  ├── controller/    # Business logic
+  ├── utils/         # Helper functions
+  └── services/      # API services
+```
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Configure your API keys (check `.env.example` for required keys)
+4. Run the app:
+   ```bash
+   flutter run
+   ```
 
-A few resources to get you started if this is your first Flutter project:
+## Security Note
+API keys and sensitive credentials should be stored in a secure environment file. Never commit sensitive credentials to version control.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Design
+- Material Design principles
+- Modern UI/UX with smooth animations
+- Responsive layout for various screen sizes
+- Custom themes support
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Performance Features
+- Efficient image caching
+- Lazy loading
+- Offline support
+- Optimized state management
+
+## Contributing
+Feel free to submit issues and enhancement requests.

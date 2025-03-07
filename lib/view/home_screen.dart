@@ -1040,20 +1040,6 @@ class NewsSearchDelegate extends SearchDelegate<String> {
                         ],
                       ),
                     ),
-                    Positioned(
-                      right: 8,
-                      bottom: 8,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.volume_up_outlined,
-                          color: Colors.grey[600],
-                        ),
-                        onPressed: () {
-                          final textToSpeak = '${article.title}. ${article.description}';
-                          // _speak(textToSpeak);
-                        },
-                      ),
-                    ),
                   ],
                 ),
               ),

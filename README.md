@@ -45,6 +45,89 @@ lib/
   └── services/      # API services
 ```
 
+## Database Structure
+```mermaid
+erDiagram
+    User {
+        string id PK
+        string name
+        string email
+        string profileImage
+        string language
+        datetime createdAt
+    }
+    
+    Article {
+        string id PK
+        string title
+        string description
+        string url
+        string urlToImage
+        string publishedAt
+        string content
+        string author
+        string category
+    }
+    
+    Source {
+        string id PK
+        string name
+    }
+    
+    CurrentAffairs {
+        string id PK
+        string title
+        string description
+        string date
+    }
+    
+    Bookmark {
+        string id PK
+        string userId FK
+        string articleId FK
+        datetime createdAt
+    }
+    
+    Category {
+        string id PK
+        string name
+        string description
+    }
+    
+    UserInterest {
+        string userId FK
+        string categoryId FK
+        datetime createdAt
+    }
+    
+    Quiz {
+        string id PK
+        string currentAffairsId FK
+        string question
+        string correctAnswer
+        json options
+    }
+    
+    UserQuizAttempt {
+        string id PK
+        string userId FK
+        string quizId FK
+        string selectedAnswer
+        boolean isCorrect
+        datetime attemptedAt
+    }
+
+    Article ||--|| Source : "has"
+    User ||--o{ Bookmark : "creates"
+    Article ||--o{ Bookmark : "included_in"
+    User ||--o{ UserInterest : "has"
+    Category ||--o{ UserInterest : "belongs_to"
+    Article ||--o{ Category : "belongs_to"
+    CurrentAffairs ||--o{ Quiz : "has"
+    User ||--o{ UserQuizAttempt : "makes"
+    Quiz ||--o{ UserQuizAttempt : "attempted_in"
+```
+
 ## Getting Started
 
 1. Clone the repository
